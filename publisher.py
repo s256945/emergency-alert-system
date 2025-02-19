@@ -5,9 +5,9 @@ from config import BROKER, PORT
 client = mqtt.Client()
 client.connect(BROKER, PORT, 60)
 
-# Define alert templates
-ALERT_TEMPLATES = {
-    '1': {
+# Define alert templates using an array of dictionaries
+ALERT_TEMPLATES = [
+    {
         'title': '🌊 Flooding Alert 🌊',
         'topic': 'emergency/flooding',
         'sample_data': {
@@ -21,7 +21,7 @@ ALERT_TEMPLATES = {
             '📞 Helpline': '[e.g. For assistance, call the Suffolk emergency helpline at 0345 606 6067]'
         }
     },
-    '2': {
+    {
         'title': '💥 Terrorist Threat Alert 💥',
         'topic': 'emergency/terrorist_threat',
         'sample_data': {
@@ -35,7 +35,7 @@ ALERT_TEMPLATES = {
             '📞 Helpline': '[e.g. For assistance, call the Essex emergency helpline at 0345 603 7630]'
         }
     },
-    '3': {
+    {
         'title': '🦠 Public Health Emergency Alert 🦠',
         'topic': 'emergency/public_health',
         'sample_data': {
@@ -49,7 +49,7 @@ ALERT_TEMPLATES = {
             '📞 Helpline': '[e.g. For assistance, call the Essex health emergency helpline at 0300 303 9988]'
         }
     },
-    '4': {
+    {
         'title': '☢️ Nuclear Emergency Alert ☢️',
         'topic': 'emergency/nuclear_war',
         'sample_data': {
@@ -59,28 +59,29 @@ ALERT_TEMPLATES = {
             '🏥 Health & Welfare': '[e.g. Stay indoors, close all windows, stockpile non-perishables and water]',
             '📢 Advice': '[e.g. Tune your radio or TV to the BBC, and await further instructions]',
             '🛡️ Reassurance': '[e.g. The county\'s emergency responders and civil defense forces have been mobilised]',
-            '🔌 Practical Implications': '[e.g. Expect disruptions to all public services and utilities for the foreseable future]',
+            '🔌 Practical Implications': '[e.g. Expect disruptions to all public services and utilities for the foreseeable future]',
             '📞 Helpline': '[e.g. For assistance, call the Essex civil defense helpline at 0300 303 9989]'
         }
     }
-}
+]
 
 # User enters their name
 name = input("Enter your name: ")
 
 # User selects which alert to send
 print(f"Hello, {name}! Select which alert to send:")
-for key, value in ALERT_TEMPLATES.items():
-    print(f"{key}. {value['title']}")
+for i, value in enumerate(ALERT_TEMPLATES):
+    print(f"{i + 1}. {value['title']}")
 
 choice = input("Enter your choice (1/2/3/4): ")
 
 # Validate choice
-if choice not in ALERT_TEMPLATES:
+if not choice.isdigit() or not (1 <= int(choice) <= len(ALERT_TEMPLATES)):
     print("Invalid choice. Exiting.")
     exit()
 
-alert_info = ALERT_TEMPLATES[choice]
+# Get the selected alert template
+alert_info = ALERT_TEMPLATES[int(choice) - 1]
 print(f"\nExample of {alert_info['title']}:")
 for field, example in alert_info['sample_data'].items():
     print(f"{field}: {example}")
