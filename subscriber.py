@@ -3,7 +3,7 @@ from config import BROKER, PORT
 
 # Callback function when a message is received
 def on_message(client, userdata, message):
-    print(f"[{userdata}] 🚨 Received Alert: {message.payload.decode()}")
+    print(f"[{userdata}] Received Alert: " + "\n" + f"{message.payload.decode()}" + "\n")
 
 # Function to create and configure a client
 def create_client(alert_name, topic):
