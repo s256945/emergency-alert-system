@@ -50,9 +50,7 @@ def start_subscriber():
     # Keep the main thread running
     try:
         while True:
-            client_flooding.loop_forever()
-            client_terrorist.loop_forever()
-            client_health.loop_forever()
+            pass
     except KeyboardInterrupt:
         print("Exiting...")
         client_flooding.disconnect()
