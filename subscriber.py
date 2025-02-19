@@ -1,22 +1,58 @@
 import paho.mqtt.client as mqtt
-from config import BROKER, PORT, TOPIC
+from config import BROKER, PORT
 
 # Callback function when a message is received
 def on_message(client, userdata, message):
     print(f"[SUBSCRIBER] 🚨 Received Alert: {message.payload.decode()}")
 
-# Create MQTT client
-client = mqtt.Client()
+# Create MQTT clients for each subscriber
+client_flooding = mqtt.Client()
+client_terrorist = mqtt.Client()
+client_health = mqtt.Client()
 
-# Set up the message callback
-client.on_message = on_message
+# Set up message callback for each client
+client_flooding.on_message = on_message
+client_terrorist.on_message = on_message
+client_health.on_message = on_message
 
-# Connect to the broker with a 120-second timeout to avoid connection timeout errors
-client.connect(BROKER, PORT, 120)
+# Connect to the brokers with a 120-second timeout
+client_flooding.connect(BROKER, PORT, 120)
+client_terrorist.connect(BROKER, PORT, 120)
+client_health.connect(BROKER, PORT, 120)
 
-# Subscribe to the topic
-client.subscribe(TOPIC)
-print(f"[SUBSCRIBER] Listening for alerts on {TOPIC}...")
+# User selects which alert to listen for
+def start_subscriber():
+    print("Select which alert to subscribe to:")
+    print("1. Flooding Alert")
+    print("2. Terrorist Threat Alert")
+    print("3. Public Health Alert")
+    choice = input("Enter your choice (1/2/3): ")
 
-# Start MQTT loop to keep listening
-client.loop_forever()
+    if choice == '1':
+        # Each choice selection starts a loop where the client sits and listens for alerts on their topic
+        client_flooding.subscribe("emergency/flooding")
+        print("[SUBSCRIBER] Listening for flooding alerts on 'emergency/flooding'...")
+        client_flooding.loop_start()
+    elif choice == '2':
+        client_terrorist.subscribe("emergency/terrorist_threat")
+        print("[SUBSCRIBER] Listening for terrorist threat alerts on 'emergency/terrorist_threat'...")
+        client_terrorist.loop_start()
+    elif choice == '3':
+        client_health.subscribe("emergency/public_health")
+        print("[SUBSCRIBER] Listening for public health alerts on 'emergency/public_health'...")
+        client_health.loop_start()
+    else:
+        print("Invalid choice. Please enter 1, 2, or 3.")
+
+    # Keep the main thread running
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        print("Exiting...")
+        client_flooding.disconnect()
+        client_terrorist.disconnect()
+        client_health.disconnect()
+
+# Start the subscriber based on user input
+start_subscriber()
