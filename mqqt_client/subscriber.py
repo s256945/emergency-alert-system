@@ -1,5 +1,5 @@
 import paho.mqtt.client as mqtt
-from config import BROKER, PORT
+from backend.config import BROKER, PORT
 
 # Callback function when a message is received
 def on_message(client, userdata, message):
