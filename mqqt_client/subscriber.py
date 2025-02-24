@@ -1,17 +1,38 @@
+import sys
+import os
 import paho.mqtt.client as mqtt
-from backend.config import BROKER, PORT
+
+# Add the backend folder to the path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
+
+# Import BROKER and PORT from backend.config
+from config import BROKER, PORT
 
 # Callback function when a message is received
 def on_message(client, userdata, message):
-    print(f"[{userdata}] Received Alert: " + "\n" + f"{message.payload.decode()}" + "\n")
+    print(f"[{userdata}] Received Alert: {message.payload.decode()}")
 
 # Function to create and configure a client
-def create_client(alert_name, topic):
+def create_client(alert_name, topic, name):
     client = mqtt.Client(userdata=alert_name)
     client.on_message = on_message
-    client.connect(BROKER, PORT, 120)
-    client.subscribe(topic)
-    client.loop_start()
+    client.user_data_set(name)  # Set user data (name) here
+    
+    try:
+        client.connect(BROKER, PORT, 120)
+        print(f"Connected to {BROKER} on port {PORT}")
+    except Exception as e:
+        print(f"Failed to connect to MQTT broker: {e}")
+        return None
+    
+    # Subscribe to the topic
+    result, mid = client.subscribe(topic)
+    if result == mqtt.MQTT_ERR_SUCCESS:
+        print(f"Successfully subscribed to {topic}")
+    else:
+        print(f"Failed to subscribe to {topic}")
+    
+    client.loop_start()  # Start the loop to handle incoming messages
     print(f"[{alert_name}] Listening for {alert_name} alerts on '{topic}'...")
     return client
 
@@ -34,21 +55,19 @@ def start_subscriber():
         '4': ("Nuclear War Subscriber", "emergency/nuclear_war")
     }
     
-    # If user enters a valid choice, create and subscribe to the appropriate alert
     if choice in alerts:
         alert_name, topic = alerts[choice]
-        client = create_client(alert_name, topic)
-        client.user_data_set(name)
+        client = create_client(alert_name, topic, name)
+        if client:
+            try:
+                while True:
+                    pass
+            except KeyboardInterrupt:
+                print("Exiting...")
+                client.disconnect()
     else:
         print("Invalid choice. Please enter 1, 2, 3, or 4.")
-        return start_subscriber()  # Recursively retry if invalid choice
-
-    try:
-        while True:
-            pass
-    except KeyboardInterrupt:
-        print("Exiting...")
-        client.disconnect()
+        start_subscriber()  # Recursively retry if invalid choice
 
 # Start the subscriber based on user input
 start_subscriber()
