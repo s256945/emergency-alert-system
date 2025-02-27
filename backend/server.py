@@ -11,15 +11,14 @@ client.loop_start()
 
 # Thresholds for different sensor-based alerts
 THRESHOLDS = {
-    "flooding": 80,  # If water level exceeds 80%, trigger alert
-    "nuclear_war": 50,  # If radiation level exceeds 50%, trigger alert
-    "public_health": 500  # If virus spread exceeds 500 cases, trigger alert
+    "flooding": 80,
+    "nuclear_war": 50,
+    "public_health": 500
 }
 
 @app.route('/receive_data', methods=['POST'])
 def receive_data():
     data = request.json
-    print(f"Received Sensor Data: {data}")  # Log incoming sensor data
     sensor_type = data.get("sensor_type")
     value = data.get("value")
 

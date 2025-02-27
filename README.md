@@ -25,9 +25,11 @@ pip install paho-mqtt
 ```
 
 ### Install Mosquitto MQTT Broker
+
 If you don't already have an MQTT broker, you'll need to install Mosquitto locally.
 
-## Mac
+#### Mac
+
 ```bash
 brew install mosquitto
 ```
@@ -38,9 +40,11 @@ After installation, start the Mosquitto broker with:
 ```bash
 brew services start mosquitto
 ```
+
 This will start the Mosquitto broker on the default port (1883).
 
-## Windows
+#### Windows
+
 1. Download the Mosquitto installer from the official website: [Mosquitto Downloads](https://mosquitto.org/download/)
 2. Run the installer and follow the installation instructions.
 
@@ -50,23 +54,30 @@ After installation, start the Mosquitto broker with:
 ```bash
 net start mosquitto
 ```
+
 This will start the Mosquitto broker on the default port (1883).
 
 ## Running the System
-1. Running the Subscriber
-The Subscriber listens for incoming emergency alerts on a specific MQTT topic.
 
-Run the subscriber using:
+1. Running the Server
+
 ```bash
+cd backend
+python server.py
+```
+
+2. Running the Mock Data Publisher
+   The Mock Data Publisher sends mock data at different levels to MQTT topics.
+
+```bash
+cd mock_data
+python mock_sensor.py
+```
+
+3. Running the Subscriber
+   The Subscriber listens for incoming emergency alerts on a specific MQTT topic.
+
+```bash
+cd mqqt_client
 python subscriber.py
 ```
-The subscriber will now be listening for emergency alerts on the topic emergency/alert.
-
-2. Running the Publisher
-The Publisher sends emergency alerts to a specific MQTT topic.
-
-While keeping the subscriber open, also run the publisher using:
-```bash
-python publisher.py
-```
-When the publisher sends an alert, the subscriber will receive and display the alert message.

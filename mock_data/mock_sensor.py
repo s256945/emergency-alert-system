@@ -2,8 +2,8 @@ import random
 import requests
 import time
 
-SERVER_URL = "http://localhost:5000/receive_data"
-THREAT_URL = "http://localhost:5000/report_threat"
+SERVER_URL = "http://localhost:5003/receive_data"
+THREAT_URL = "http://localhost:5003/report_threat"
 
 SENSOR_TYPES = ["flooding", "public_health", "nuclear_war"]
 THREAT_DESCRIPTIONS = [
